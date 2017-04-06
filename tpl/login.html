@@ -1,0 +1,23 @@
+<div class="page-content container" ng-controller="loginCtrl">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<div class="login-wrapper">
+			        <div class="box">
+			            <div class="content-wrap">
+			                <h6>Employee Timesheet</h6>
+			                <form>
+				                <input  class="form-control" ng-model="emp_id" type="text" placeholder="Enter a Employee id" required>
+				                <input class="form-control" ng-model="pass" type="password" placeholder="Password" required>
+				                <div class="action">
+				                    <button ng-click="login()" class="btn btn-primary signup">Login</button>
+				                    <button ng-click="logout()" class="btn btn-danger signup">Logout</button>
+				                </div>
+			                </form>                
+			            </div>
+			        </div>
+
+			        
+			    </div>
+			</div>
+		</div>
+	</div>
