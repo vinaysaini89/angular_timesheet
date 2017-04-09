@@ -8,8 +8,114 @@
 		  	<div class="col-md-10">
 			  	<div class="row">
 			  		<div class="content-box-large">
-			  			<div class="col-md-3"><p>Your total working hours: 09:00</p></div>
-			  			<div class="col-md-9"><p>Your login time is: {{logged_time_in |  date : "H:mm"}}</p></div>	
+			  			<div class="row">
+				  			<div class="col-md-3"><p>Your total working hours: {{totalHours}}</p></div>
+				  			<div class="col-md-9"><p>Your login time is: {{logged_time_in |  date : "H:mm"}}</p></div>
+			  			</div>
+			  			<!--<div class="row">
+				  			<div class="col-md-3">
+
+				  				<select  ng-model="pr[0].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[0].description" type="text" placeholder="Description(optional)" name="description" class="form-control">
+				  			</div>
+
+				  			<div class="col-md-3">
+				  				<input ng-blur="chanheTime1()" ng-model="pr[0].time"  type="text" value="" placeholder="Enter time(hh::mm)" name="time[]" class="form-control">
+				  			</div>
+			  			</div>
+			  			</br>
+			  			<div class="row">
+				  			<div class="col-md-3">
+				  				<select  ng-model="pr[1].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[1].description" type="text" placeholder="Description(optional)" name="" class="form-control">
+				  			</div>
+
+				  			<div class="col-md-3">
+				  				<input ng-blur="chanheTime2()" ng-model="pr[1].time" placeholder="Enter time(optional-hh::mm)" name="" class="form-control" type="text"  value="" name="time[]">
+				  				
+				  			</div>
+			  			</div>
+			  			</br>
+			  			<div class="row">
+				  			<div class="col-md-3">
+				  				<select  ng-model="pr[2].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[2].description" type="text" placeholder="Description(optional)" name="" class="form-control">
+				  			</div>
+
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[2].time" type="text" placeholder="Enter time(optional-hh::mm)" name="time[]" class="form-control">
+				  			</div>
+			  			</div>
+			  			</br> -->
+
+
+			  			<div class="row">
+				  			<div class="col-md-3">
+
+				  				<select  ng-model="pr[0].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[0].description" type="text" placeholder="Description*" name="description" class="form-control">
+				  			</div>
+
+				  			<div class="col-md-3">
+				  				<input ng-blur="chanheTime1()" ng-model="pr[0].time"  type="text" value="" placeholder="Enter time(hh::mm)" name="time[]" class="form-control">
+				  			</div>
+			  			</div>
+			  			</br>
+			  			<div class="row">
+				  			<div class="col-md-3">
+				  				<select  ng-model="pr[1].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[1].description" type="text" placeholder="Description*" name="" class="form-control">
+				  			</div>
+
+				  			<div class="col-md-3">
+				  				<input ng-blur="chanheTime2()" ng-model="pr[1].time" placeholder="Enter time(optional-hh::mm)" name="" class="form-control" type="text"  value="" name="time[]">
+				  				
+				  			</div>
+			  			</div>
+			  			</br>
+			  			<div class="row">
+				  			<div class="col-md-3">
+				  				<select  ng-model="pr[2].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[2].description" type="text" placeholder="Description*" name="" class="form-control">
+				  			</div>
+
+				  			<div class="col-md-3">
+				  				<input ng-model="pr[2].time" type="text" placeholder="Enter time(optional-hh::mm)" name="time[]" class="form-control">
+				  			</div>
+			  			</div>
+			  			</br>
+
+			  			<div class="row">
+			  				<div class="col-md-3">
+					  			<button ng-click="submit()" class="btn btn-primary">Submit</button>
+					  		</div>
+			  			</div>
+
+
 			  		</div>	
 				</div>
 			</div>
