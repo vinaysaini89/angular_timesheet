@@ -65,6 +65,7 @@ app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpPro
                 },
             "content@": {
                 templateUrl : "tpl/logout.html",
+
                 controller:  "logoutCtrl"
             }
         }
@@ -270,7 +271,7 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                             $rootScope.postData = {
                                 "total_working_hours":$scope.totalHours,
                                 "report_data":$scope.pr,
-                                "login_time": $scope.logged_time_in
+                                "login_time": $rootScope.authUser.logged_in_time
                             }
                             
                             ModalService.showModal({
@@ -426,19 +427,19 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
 
 }]);
 
-app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element',
-    function($scope, $rootScope,$http, auth,$location, $element, name){
+app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element','close',
+    function($scope, $rootScope,$http, auth,$location, $element, close){
     
      $scope.logout = function(complent) {
             if(complent == "")
             {
-                alert("Please nter the reason for leaving early");
+                alert("Please enter the reason for leaving early");
                 return;
             }
             $rootScope.postData.reason = complent;
                  $http({
                               method: 'POST',
-                              url: apiBaseUrl+'reason?emp_id=1',
+                              url: apiBaseUrl+'reason?emp_id='+auth.getUserId(),
                               data: $.param($rootScope.postData),
                               headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
                               //  dataType: "json"
@@ -448,7 +449,8 @@ app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','
                                 if(response.data.code == 200)
                                 {
                                     //  Manually hide the modal using bootstrap.
-                                    //$element.modal('hide');
+                                    $element.modal('hide');
+					close(null, 500);
                                     auth.logout();
                                     
                                 }
