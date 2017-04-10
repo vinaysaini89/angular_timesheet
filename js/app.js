@@ -1,6 +1,6 @@
 var app = angular.module('EmployeeTimesheet', ['ui.router', 'ngStorage', 'angularMoment','angularModalService']);
-//var apiBaseUrl = "http://employeetimesheet.com/";
-var apiBaseUrl = "http://ankur01.thirstt.com:81/timesheet_api/index.php/";
+var apiBaseUrl = "http://employeetimesheet.com/";
+//var apiBaseUrl = "http://ankur01.thirstt.com:81/timesheet_api/index.php/";
 app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpProvider',
     function($stateProvider,$urlRouterProvider,$locationProvider, $httpProvider) {
     $stateProvider
@@ -270,7 +270,7 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                             $rootScope.postData = {
                                 "total_working_hours":$scope.totalHours,
                                 "report_data":$scope.pr,
-                                "login_time": $scope.logged_time_in
+                                "login_time": $rootScope.authUser.logged_in_time
                             }
                             
                             ModalService.showModal({
@@ -426,8 +426,8 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
 
 }]);
 
-app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element',
-    function($scope, $rootScope,$http, auth,$location, $element, name){
+app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element', 'close',
+    function($scope, $rootScope,$http, auth,$location, $element, close){
     
      $scope.logout = function(complent) {
             if(complent == "")
@@ -445,10 +445,15 @@ app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','
 
                             }).then(function successCallback(response) {
                                 //console.log(response);
+                                //  Manually hide the modal using bootstrap.
+                                //$element.modal('hide');
+                                //close(null, 500);
                                 if(response.data.code == 200)
                                 {
+                                    
                                     //  Manually hide the modal using bootstrap.
-                                    //$element.modal('hide');
+                                    $element.modal('hide');
+                                    close(null, 500);
                                     auth.logout();
                                     
                                 }
