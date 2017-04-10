@@ -1,6 +1,6 @@
 var app = angular.module('EmployeeTimesheet', ['ui.router', 'ngStorage', 'angularMoment','angularModalService']);
 //var apiBaseUrl = "http://employeetimesheet.com/";
-var apiBaseUrl = "http://ankur01.thirstt.com:81/timesheet_api/";
+var apiBaseUrl = "http://ankur01.thirstt.com:81/timesheet_api/index.php/";
 app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpProvider',
     function($stateProvider,$urlRouterProvider,$locationProvider, $httpProvider) {
     $stateProvider
