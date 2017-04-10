@@ -1,5 +1,6 @@
 var app = angular.module('EmployeeTimesheet', ['ui.router', 'ngStorage', 'angularMoment','angularModalService']);
-var apiBaseUrl = "http://employeetimesheet.com/";
+//var apiBaseUrl = "http://employeetimesheet.com/";
+var apiBaseUrl = "http://ankur01.thirstt.com:81/timesheet_api/";
 app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpProvider',
     function($stateProvider,$urlRouterProvider,$locationProvider, $httpProvider) {
     $stateProvider
@@ -74,7 +75,7 @@ app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpPro
     $locationProvider.html5Mode(false);
     $locationProvider.hashPrefix('');
 
-    $httpProvider.defaults.headers.common = {};
+    //$httpProvider.defaults.headers.common = {};
     $httpProvider.defaults.headers.post = {};
     $httpProvider.defaults.headers.put = {};
     $httpProvider.defaults.headers.patch = {};
