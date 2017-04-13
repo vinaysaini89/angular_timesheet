@@ -102,29 +102,22 @@ app.run(["$rootScope", "$location",'auth', function ($rootScope, $location, auth
 
 
 
-app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$location', 'moment','ModalService',
-    function($rootScope,$scope, $filter, $http, auth,$location, moment, ModalService){
-        auth.checklogout(auth.getUserId(), $rootScope.authUser.password, function(res) {
-                if(res == 200)
-                  {
-
-                    alert("You are already logout");
-                    auth.logout();
-                    return;
-                  }
-                  else{
-           
+app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$location', 'moment','ModalService','$compile',
+    function($rootScope,$scope, $filter, $http, auth,$location, moment, ModalService, $compile){
        
+        
     $rootScope.complent = "";
-    $scope.pr = {
-          "0": {"pro": 0,'time':''},
-          "1": {'pro': 0,'time':''},
-          "2": {'pro': 0,'time':''},
-          "3": {'pro': 0,'time':''},
-          "4": {'pro': 0,'time':''},
-          
-        };
-    //$scope.pr = {};
+    $scope.pr = [];
+    $scope.obj = {};
+    $scope.obj.pro = 0;
+    $scope.obj.time = 0;
+    $scope.pr.push($scope.obj);
+    
+    var regular_hours = "09:00";
+    var regular_minutes =  moment(new Date("1/1/1900 "+ regular_hours));
+    var regular_minutes =  (regular_minutes.hour()*60) + regular_minutes.minute();
+
+
 
     $scope.logged_time_in = new Date($rootScope.authUser.logged_in_time);
     var logged_time_in = moment($scope.logged_time_in); // another date
@@ -132,16 +125,17 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
     var duration = moment.duration(now.diff(logged_time_in));
     var hours = ('0' + duration._data.hours).slice(-2);
     var minutes = ('0' + duration._data.minutes).slice(-2);;
+
     $scope.totalHours = hours+":"+minutes;
     $scope.totalMinutes = moment(new Date("1/1/1900 "+ hours+":"+minutes));
     $scope.totalMinutes =  ($scope.totalMinutes.hour()*60) + $scope.totalMinutes.minute();
      
-    $scope.pr[0].time = $scope.totalMinutes;
+    $scope.pr[0].time = $scope.input_total = $scope.totalMinutes//$scope.totalHours;
     $http.get(apiBaseUrl+"/projects")
                 .then(function(response){
                    if(response.data.code == 200)
                     {
-                        console.log($scope.projects = response.data.data);
+                        $scope.projects = response.data.data;
                         
                     }
                     else
@@ -151,6 +145,47 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                     }
                 });
 
+
+        $scope.inc = 1;
+        $scope.addNewRow = function() {
+
+            var obj = {"pro": 0,'time':''};
+            //$scope.pr.splice($scope.inc, 0, obj);
+            //$scope.pr.push(obj);
+            //console.log($scope.pr);
+            var html =  "<div class='row rrow'>";
+                html += "<div class='col-md-3'>";
+                html += "<select name='report["+$scope.inc+"][project]' ng-model='pr["+$scope.inc+"].pro' ng-options='(project.p_name + \" - \" +project.activity) | capitalize for (key,project) in projects | orderBy:\"p_name\" track by project.id' class='form-control'>";
+                html += "<option value=''>--Select Project and activity--</option>";
+                html += "</select>";
+                html += "</div>";
+                html += "<div class='col-md-3'>";
+                html += "<input min='0' value='0' ng-blur='blurs($event, "+$scope.input_total+")' type='number' placeholder='Enter time(Minutes)' name='report["+$scope.inc+"][time]' class='form-control input_time'>";
+                html += "</div>";
+                //html += '<div class="col-md-3">';
+                //html += '<button class="btn btn-danger" ng-click="removeRow($event,'+$scope.inc+')">-</button>';
+                //html += '</div>';
+                html += "</div>";
+                
+                html = $compile(html)($scope);
+                var report_container = $("#report_content");
+                report_container.append(html);
+
+                $scope.inc++;
+            
+        }
+
+
+        $scope.removeRow = function(element, inc) {
+           
+            element = angular.element(element.target);
+            element.parent().parent().remove();
+             //var index = $scope.pr.indexOf(inc);
+            //$scope.pr.splice(inc, 1); 
+            //console.log($scope.pr);
+            $scope.inc--;
+
+        }
 
         $scope.checklogout = function(emp_id, pass, callback) {
            $http
@@ -163,118 +198,59 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
 
         }
 
-        $scope.submit = function() {
 
-            $scope.checklogout(auth.getUserId(), $rootScope.authUser.password, function(res) {
+
+        $scope.submit = function() {
+                 $scope.checklogout(auth.getUserId(), $rootScope.authUser.password, function(res) {
                 if(res == 200)
                   {
 
                     alert("You are already logout");
-                    auth.logout();
                     return;
                   }else{
-            
+                        var $form = $('#report_form');
+                        var values = {};
+                        var is = false;
+                        var iss=false;
+                        $.each($form.serializeArray(), function(i, field) {
+                            
+                                if(field.value == "")
+                                { 
+                                    is = true;
+                                  if(!iss){  
+                                    iss=true;
+                                    str = field.name.replace('[', ".").replace('[', ".").replace(']', ".").replace(']', ".");
+                                    alert(str.split('.')[3].charAt(0).toUpperCase()+str.split('.')[3].slice(1)+" is required in "+(parseInt(str.split('.')[1])+1)+" row");
+                                    return;
+                                   } 
+                                }
+                                else{       
 
-            //var regexp = /([01][0-9]|[02][0-3]):[0-5][0-9]/;
-            if($scope.pr[0].pro == 0 || $scope.pr[0].pro== null)
-            { 
-                
-                    alert("Please select a projects in "+(1)+ " row");
-                    return;    
-            
-            }
-            else if($scope.pr[0].time == "" ){
-                    alert("Please enter time in "+(1)+ " row");
-                    return;  
-                }
+                                    values[field.name] = field.value;
+                                }
+                        });
 
-            /*if($scope.pr[0].time != ""){
-                var correct = ($scope.pr[0].time.search(regexp) >= 0) ? true : false;
-                if(!correct)
-                {
-                    alert("Please enter the valid time in 1 row");
-                    return;
-                }
+                    values['total_working_hours'] = $scope.totalHours;
+                    values['login_time'] = $rootScope.authUser.logged_in_time;
+                    if(is)
+                    {
+                        return;
+                    }
 
-            }*/
-            
-            if($scope.pr[1].time != "")
-            { 
-                /*var correct = ($scope.pr[1].time.search(regexp) >= 0) ? true : false;
-                if(!correct)
-                {
-                    alert("Please enter the valid time in 2 row");
-                    return;
-                }
-                */
-
-                if(typeof $scope.pr[1].pro !== 'object' || $scope.pr[1].pro == null)
-                { 
-                    
-                        alert("Please select a projects in "+(2)+ " row");
-                        return;    
-                
-                }
-
-            }
-
-            if($scope.pr[2].time != "")
-            { 
-               if(typeof $scope.pr[2].pro !== 'object' || $scope.pr[2].pro == null)
-                { 
-                    
-                        alert("Please select a projects in "+(3)+ " row");
-                        return;    
-                
-                }
-            }
-
-
-            if($scope.pr[3].time != "")
-            { 
-                
-                if(typeof $scope.pr[3].pro !== 'object' || $scope.pr[3].pro == null)
-                { 
-                    
-                        alert("Please select a projects in "+(4)+ " row");
-                        return;    
-                
-                }
-
-            }
-
-            if($scope.pr[4].time != "")
-            { 
-               
-                if(typeof $scope.pr[4].pro !== 'object' || $scope.pr[4].pro == null)
-                { 
-                    
-                        alert("Please select a projects in "+(5)+ " row");
-                        return;    
-                
-                }
-
-            }
+                    //console.log(values);
                     var total_minutes = 0;
-                    for (var i = 0; i < 5; i++) {
-                            if($scope.pr[i].time != "" )
-                            {
-                                total_minutes = parseInt(total_minutes) + parseInt($scope.pr[i].time);
-
-                            }
+                    for (var i = 0; i < $scope.inc; i++) {
+                       total_minutes = total_minutes + parseInt(values["report["+i+"][time]"]);
                     }
                     //alert(total_minutes);
-                    regular_minutes = 540;
+                    
+                    
                     if($scope.totalMinutes == total_minutes){
 
                         if($scope.totalMinutes < regular_minutes)
                         {  
-                            //alert("popu")
-                            $rootScope.postData = {
-                                "total_working_hours":$scope.totalHours,
-                                "report_data":$scope.pr,
-                                "login_time": $rootScope.authUser.logged_in_time
-                            }
+                            
+                            $rootScope.postData = values;
                             
                             ModalService.showModal({
                                   templateUrl: "tpl/report_modal.html",
@@ -285,19 +261,12 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                                 });
                         }
                         else
-                        { 
-                            $scope.postData = {
-                                "total_working_hours":$scope.totalHours,
-                                "report_data":$scope.pr,
-                                "login_time": $rootScope.authUser.logged_in_time
-                            }
-                          //  console.log($scope.postData);
-
-                            // Simple GET request example:
+                        {
+                           
                             $http({
                               method: 'POST',
                               url: apiBaseUrl+'create_report?emp_id='+auth.getUserId(),
-                              data: $.param($scope.postData),
+                              data: $.param(values),
                               headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
                               //  dataType: "json"
 
@@ -321,103 +290,35 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                     }
                     else
                     {
-                        if($scope.remain_minutes !=0){
-                            alert("You have "+$scope.remain_minutes+" minutes remain");
-                            return;
-                        }else
-                        {
-                            alert("You have to enter exceeded time more then total_working_hours!");
-                            return;
-                        }
+                        alert("You have enter exceeded or lower time from your total working hours.");
+                        return;
                     }
                     
                     
 
                 }
                 });      
+
                 
-
-
             
 
 
      };
 
-   
-     
-     $scope.blur = function (ind) { 
+    
+        var tt_m = 0;
+         $scope.blurs = function blurs(ele, total_minutes){
             
-               
-                    $scope.focus = true;
-                    var input_time = 0;
-                        for(var i = 0; i < 5; i++){
-                             if($scope.pr[i].time != "" && $scope.pr[i].time != null )
-                                    {
-                                        
-                                            input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
-
-                                    }
-                            //input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
-                        }
-
-                        console.log(input_time);
-
-                       if($scope.pr[ind].time==0||$scope.pr[ind].time==null||$scope.pr[ind].time<0)
-                       {
-                        
-                       $scope.pr[ind].time = ($scope.totalMinutes - input_time);
-
-                   }
-                   else
-                   {
-                    $scope.remain_minutes=($scope.totalMinutes - input_time);
-                   }
-                   
-                   
-       // $scope.pr[ind].time =  $scope.remain_minutes;
-        
+            element = angular.element(ele.target);
+            tt_m = (parseInt(tt_m) + parseInt(element.val()));
+            console.log(total_minutes - tt_m);
+            $(element).closest('.row').next().find('.input_time').val((total_minutes - tt_m));
                 
-    };
-    $scope.remain_minutes = 0;
-    $scope.blur_time = function (ind) { 
+            }
 
-                var input_time = 0;
-                for(var i = 0; i < 5; i++){
-                     if($scope.pr[i].time != "" && $scope.pr[i].time != null )
-                            {
-                                
-                                    input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
 
-                            }
-                    //input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
-                }
-                if($scope.totalMinutes < input_time)
-                {
 
-                        var tt = 0;
-                        for(var i = 0; i < 5; i++){
-                             if($scope.pr[i].time != "" && $scope.pr[i].time != null )
-                                    {
-                                        if(ind != i){
-                                            tt = parseInt(tt) + parseInt($scope.pr[i].time);
-                                        }
 
-                                    }
-                            //input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
-                        }
-                        console.log(tt);
-                   alert("You have enter exceeded time from your total working hours.");
-                       
-                        $scope.pr[ind].time = 0;
-                        $scope.remain_minutes = $scope.totalMinutes - tt;
-                    
-                }else{
-                    $scope.remain_minutes = $scope.totalMinutes - input_time;
-                }
-                
-               }
-     }//checklogout END CONDITION 
-}); //checklogout END FUNCTION 
 }]);
 
 app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element', 'close',
@@ -685,7 +586,7 @@ app.filter('totalHours',['$filter', function($filter) {
         
     }
 
-}])
+}]);
 
 
 

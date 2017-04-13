@@ -95,5 +95,15 @@ app.service('auth',['$localStorage', '$sessionStorage', '$http',"$location",'$ro
 
       	};
 
+        this.checklogout = function(emp_id, pass, callback) {
+           $http
+            .get(apiBaseUrl+'auth/checklogout?emp_id='+emp_id+'&password='+pass)
+                .then(function(response){
+                    callback(response.data.code);
+                  
+                  
+              });
+
+        }
 
 }]);

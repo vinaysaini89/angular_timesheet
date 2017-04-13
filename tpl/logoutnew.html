@@ -1,0 +1,51 @@
+<style type="text/css">
+		  		.welcome{
+		  			    text-align: center;
+					    font-size: 18px;
+					    font-weight: bold;
+		  		}
+		  		.rrow{
+		  			margin-bottom: 15px;
+		  		}
+		  	</style>
+		  	<div class="col-md-10">
+			  	<div class="row">
+			  		<div class="content-box-large">
+			  			<div class="row">
+				  			<div class="col-md-4"><p>Your total working hours: {{totalHours}} ({{pr[0].time}} Minutes)</p></div>
+				  			<div class="col-md-8"><p>Your login time is: {{logged_time_in |  date : "H:mm"}}</p></div>
+			  			</div>
+			  			<form id="report_form">
+			  			<div id="report_content">
+				  			<div class="row rrow">
+					  			<div class="col-md-3">
+
+					  				<select name="report[0][project]" ng-model="pr[0].pro" name="project[]" ng-options="(project.p_name + ' - ' + project.activity) | capitalize for (key,project) in projects | orderBy:'p_name' track by project.id" class="form-control">
+					  					 <option value="">--Select Project and activity--</option>
+					  				</select>
+					  			</div>
+					  			<!--<div class="col-md-3">
+					  				<input ng-model="pr[0].description" type="text" placeholder="Description*" name="description" class="form-control">
+					  			</div>-->
+
+					  			<div class="col-md-3">
+					  				<input min="0" ng-blur="blurs($event, input_total)" value="{{input_total}}"  type="number" value="" placeholder="Enter time(Minutes)" name="report[0][time]" class="form-control input_time">
+					  			</div>
+					  			<div class="col-md-3">
+					  				<button ng-click="addNewRow()" class="btn btn-primary">+</button>	
+					  			</div>
+				  			</div>
+				  			
+			  			</div>
+
+			  			<div class="row">
+			  				<div class="col-md-3">
+					  			<button ng-click="submit()" class="btn btn-primary">Submit</button>
+					  		</div>
+			  			</div>
+			  			</form>
+
+			  		</div>	
+				</div>
+			</div>
+

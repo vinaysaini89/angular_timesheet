@@ -9,102 +9,89 @@
 			  	<div class="row">
 			  		<div class="content-box-large">
 			  			<div class="row">
-				  			<div class="col-md-3"><p>Your total working hours: {{totalHours}}</p></div>
-				  			<div class="col-md-9"><p>Your login time is: {{logged_time_in |  date : "H:mm"}}</p></div>
-			  			</div>
-			  			<!--<div class="row">
+				  			<div class="col-md-4"><p>Your total working hours: {{totalHours}} ({{totalMinutes}} Minutes)</p></div>
+				  			<div class="col-md-3"><p>Your login time is: {{logged_time_in |  date : "H:mm"}}</p></div>
 				  			<div class="col-md-3">
-
-				  				<select  ng-model="pr[0].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
-				  					 <option value="">--Select Project--</option>
-				  				</select>
-				  			</div>
-				  			<div class="col-md-3">
-				  				<input ng-model="pr[0].description" type="text" placeholder="Description(optional)" name="description" class="form-control">
-				  			</div>
-
-				  			<div class="col-md-3">
-				  				<input ng-blur="chanheTime1()" ng-model="pr[0].time"  type="text" value="" placeholder="Enter time(hh::mm)" name="time[]" class="form-control">
+				  				<p>Remain: {{remain_minutes}}</p>
 				  			</div>
 			  			</div>
-			  			</br>
-			  			<div class="row">
-				  			<div class="col-md-3">
-				  				<select  ng-model="pr[1].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
-				  					 <option value="">--Select Project--</option>
-				  				</select>
-				  			</div>
-				  			<div class="col-md-3">
-				  				<input ng-model="pr[1].description" type="text" placeholder="Description(optional)" name="" class="form-control">
-				  			</div>
-
-				  			<div class="col-md-3">
-				  				<input ng-blur="chanheTime2()" ng-model="pr[1].time" placeholder="Enter time(optional-hh::mm)" name="" class="form-control" type="text"  value="" name="time[]">
-				  				
-				  			</div>
-			  			</div>
-			  			</br>
-			  			<div class="row">
-				  			<div class="col-md-3">
-				  				<select  ng-model="pr[2].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
-				  					 <option value="">--Select Project--</option>
-				  				</select>
-				  			</div>
-				  			<div class="col-md-3">
-				  				<input ng-model="pr[2].description" type="text" placeholder="Description(optional)" name="" class="form-control">
-				  			</div>
-
-				  			<div class="col-md-3">
-				  				<input ng-model="pr[2].time" type="text" placeholder="Enter time(optional-hh::mm)" name="time[]" class="form-control">
-				  			</div>
-			  			</div>
-			  			</br> -->
-
-
+			  			
 			  			<div class="row">
 				  			<div class="col-md-3">
 
-				  				<select  ng-model="pr[0].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  				<select  ng-model="pr[0].pro" ng-options="(project.p_name + ' - ' + project.activity) | capitalize for (key,project) in projects | orderBy:'p_name'  track by project.id" class="form-control">
 				  					 <option value="">--Select Project--</option>
 				  				</select>
 				  			</div>
-				  			<div class="col-md-3">
+				  			<!--<div class="col-md-3">
 				  				<input ng-model="pr[0].description" type="text" placeholder="Description*" name="description" class="form-control">
-				  			</div>
+				  			</div>-->
 
 				  			<div class="col-md-3">
-				  				<input ng-blur="chanheTime1()" ng-model="pr[0].time"  type="text" value="" placeholder="Enter time(hh::mm)" name="time[]" class="form-control">
+				  				<input ng-focus="blur(0)" ng-blur="blur_time(0)" ng-min="0" min="0"  ng-model="pr[0].time"  type="number" value="" placeholder="Enter minutes" name="time[]" class="form-control">
 				  			</div>
+				  			
 			  			</div>
 			  			</br>
 			  			<div class="row">
 				  			<div class="col-md-3">
-				  				<select  ng-model="pr[1].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  				<select  ng-model="pr[1].pro" ng-options="(project.p_name + ' - ' + project.activity) | capitalize for (key,project) in projects | orderBy:'p_name'  track by project.id" class="form-control">
 				  					 <option value="">--Select Project--</option>
 				  				</select>
 				  			</div>
-				  			<div class="col-md-3">
+				  			<!--<div class="col-md-3">
 				  				<input ng-model="pr[1].description" type="text" placeholder="Description*" name="" class="form-control">
-				  			</div>
+				  			</div>-->
 
 				  			<div class="col-md-3">
-				  				<input ng-blur="chanheTime2()" ng-model="pr[1].time" placeholder="Enter time(optional-hh::mm)" name="" class="form-control" type="text"  value="" name="time[]">
+				  				<input ng-blur="blur_time(1)" ng-disabled="(pr[1].pro == 0) ?  true : false" ng-focus="blur(1)" ng-min="0" min="0" ng-model="pr[1].time" placeholder="Enter minutes" name="" class="form-control" type="number"  value="" name="time[]">
 				  				
 				  			</div>
 			  			</div>
 			  			</br>
 			  			<div class="row">
 				  			<div class="col-md-3">
-				  				<select  ng-model="pr[2].pro" ng-options="project.p_name for (key,project) in projects track by project.id" class="form-control">
+				  				<select  ng-model="pr[2].pro" ng-options="(project.p_name + ' - ' + project.activity) | capitalize for (key,project) in projects | orderBy:'p_name'  track by project.id" class="form-control">
 				  					 <option value="">--Select Project--</option>
 				  				</select>
 				  			</div>
-				  			<div class="col-md-3">
+				  			<!--<div class="col-md-3">
 				  				<input ng-model="pr[2].description" type="text" placeholder="Description*" name="" class="form-control">
-				  			</div>
+				  			</div>-->
 
 				  			<div class="col-md-3">
-				  				<input ng-model="pr[2].time" type="text" placeholder="Enter time(optional-hh::mm)" name="time[]" class="form-control">
+				  				<input ng-blur="blur_time(2)" ng-disabled="(pr[2].pro == 0) ?  true : false" ng-focus="blur(2)" ng-min="0" min="0" ng-model="pr[2].time" type="number" placeholder="Enter minutes" name="time[]" class="form-control">
+				  			</div>
+			  			</div>
+			  			</br>
+
+			  			<div class="row">
+				  			<div class="col-md-3">
+				  				<select   ng-model="pr[3].pro" ng-options="(project.p_name + ' - ' + project.activity) | capitalize for (key,project) in projects | orderBy:'p_name'  track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<!--<div class="col-md-3">
+				  				<input ng-model="pr[2].description" type="text" placeholder="Description*" name="" class="form-control">
+				  			</div>-->
+
+				  			<div class="col-md-3">
+				  				<input ng-blur="blur_time(3)" ng-disabled="(pr[3].pro == 0) ?  true : false" ng-focus="blur(3)" ng-min="0" min="0" ng-model="pr[3].time" type="number" placeholder="Enter minutes" name="time[]" class="form-control">
+				  			</div>
+			  			</div>
+			  			</br>
+			  			<div class="row">
+				  			<div class="col-md-3">
+				  				<select   ng-model="pr[4].pro" ng-options="(project.p_name + ' - ' + project.activity) | capitalize for (key,project) in projects | orderBy:'p_name'  track by project.id" class="form-control">
+				  					 <option value="">--Select Project--</option>
+				  				</select>
+				  			</div>
+				  			<!--<div class="col-md-3">
+				  				<input ng-model="pr[2].description" type="text" placeholder="Description*" name="" class="form-control">
+				  			</div>-->
+
+				  			<div class="col-md-3">
+				  				<input ng-blur="blur_time(4)" ng-disabled="(pr[4].pro == 0) ?  true : false" ng-focus="blur(4)" ng-min="0" min="0" ng-model="pr[4].time" type="number" placeholder="Enter minutes" name="time[]" class="form-control">
 				  			</div>
 			  			</div>
 			  			</br>

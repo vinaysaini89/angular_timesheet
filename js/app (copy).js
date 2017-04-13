@@ -104,17 +104,8 @@ app.run(["$rootScope", "$location",'auth', function ($rootScope, $location, auth
 
 app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$location', 'moment','ModalService',
     function($rootScope,$scope, $filter, $http, auth,$location, moment, ModalService){
-        auth.checklogout(auth.getUserId(), $rootScope.authUser.password, function(res) {
-                if(res == 200)
-                  {
-
-                    alert("You are already logout");
-                    auth.logout();
-                    return;
-                  }
-                  else{
-           
        
+        
     $rootScope.complent = "";
     $scope.pr = {
           "0": {"pro": 0,'time':''},
@@ -170,7 +161,6 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                   {
 
                     alert("You are already logout");
-                    auth.logout();
                     return;
                   }else{
             
@@ -321,103 +311,195 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                     }
                     else
                     {
-                        if($scope.remain_minutes !=0){
-                            alert("You have "+$scope.remain_minutes+" minutes remain");
-                            return;
-                        }else
-                        {
-                            alert("You have to enter exceeded time more then total_working_hours!");
-                            return;
-                        }
+                        alert("You have enter exceeded or lower time from your total working hours.");
+                        return;
                     }
                     
                     
 
                 }
                 });      
+
                 
-
-
             
 
 
      };
 
-   
-     
-     $scope.blur = function (ind) { 
-            
-               
-                    $scope.focus = true;
-                    var input_time = 0;
-                        for(var i = 0; i < 5; i++){
-                             if($scope.pr[i].time != "" && $scope.pr[i].time != null )
-                                    {
-                                        
-                                            input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
-
-                                    }
-                            //input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
-                        }
-
-                        console.log(input_time);
-
-                       if($scope.pr[ind].time==0||$scope.pr[ind].time==null||$scope.pr[ind].time<0)
-                       {
-                        
-                       $scope.pr[ind].time = ($scope.totalMinutes - input_time);
-
-                   }
-                   else
-                   {
-                    $scope.remain_minutes=($scope.totalMinutes - input_time);
-                   }
-                   
-                   
-       // $scope.pr[ind].time =  $scope.remain_minutes;
-        
+    /* $scope.submit = function() {
+        var total_times = "00:00";
+        var total_minutes = 0;
+        alert(Object.keys($scope.pr).length);
+        for (var i=0;  (Object.keys($scope.pr).length); i++)
+         {
+            if($scope.pr[i].pro == 0 || $scope.pr[i].pro== null)
+            { 
+                if($scope.pr[i].time != "" ){
+                    alert("Please select a projects in "+(i+1)+ " row");
+                    return;    
+                }
                 
-    };
-    $scope.remain_minutes = 0;
-    $scope.blur_time = function (ind) { 
+
+            }
+
+            if($scope.pr[i].pro != 0  || $scope.pr[i].pro== null)
+            { 
+                if($scope.pr[i].time == "" ){
+                    alert("Please enter time in "+(i+1)+ " row");
+                    return;    
+                }
+                
+                
+            }
+
+            if(typeof $scope.pr[i].pro === 'object')
+            {   
+                var regexp = /([01][0-9]|[02][0-3]):[0-5][0-9]/;
+                var correct = ($scope.pr[i].time.search(regexp) >= 0) ? true : false;
+                if(correct)
+                {
+                    var t_times =  moment(new Date("1/1/1900 "+ $scope.pr[i].time));
+                    var t_min =  (t_times.hour()*60) + t_times.minute();
+                    total_minutes = total_minutes + t_min;
+                    
+                    
+
+                    
+
+                }
+                else
+                {
+                    alert("Please enter the valid time");
+                    return;
+                }
+
+
+
+            }
+
+        }
+
+                    if($scope.totalMinutes == total_minutes)
+                    {
+                        alert("sd");
+                    }
+                    else
+                    {
+                        alert("You have to enter hours more then total working hours");
+                        return;
+                    } 
+        
+    };*/
+
+     $scope.blur = function (ind) { 
+        //alert("df");
+        
+               
 
                 var input_time = 0;
                 for(var i = 0; i < 5; i++){
-                     if($scope.pr[i].time != "" && $scope.pr[i].time != null )
+                     if($scope.pr[i].time != ""  )
                             {
-                                
-                                    input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
+                                input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
 
                             }
                     //input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
                 }
-                if($scope.totalMinutes < input_time)
+                
+                var total_time = $scope.totalMinutes;
+                
+                if(total_time < input_time)
+                {
+                    var newt = 0;
+                    for(var i = 0; i < 5; i++){
+                        if(ind == 0)
+                        {
+                            $scope.pr[i].time = $scope.totalMinutes;
+                        }
+                        else
+                        {   if($scope.pr[i].time != ""  )
+                            {
+                                if(i != ind){
+                                newt = parseInt(newt) + parseInt($scope.pr[i].time);
+                            }
+                            }
+                            
+                        }
+                    }
+                    
+                   $scope.pr[ind].time = parseInt(total_time) - parseInt(newt);
+                   if(ind != 5){
+                        $scope.pr[ind].time = 0;
+                   }
+                }
+                else
                 {
 
-                        var tt = 0;
-                        for(var i = 0; i < 5; i++){
-                             if($scope.pr[i].time != "" && $scope.pr[i].time != null )
-                                    {
-                                        if(ind != i){
-                                            tt = parseInt(tt) + parseInt($scope.pr[i].time);
-                                        }
+                    $scope.pr[ind].time = parseInt(total_time) - parseInt(input_time);
+                }
+    };
 
-                                    }
-                            //input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
+    $scope.blur1 = function (ind) { 
+        //alert("df");
+        
+                if($scope.pr[ind].time == null || $scope.pr[ind].time == "")
+                {       if(ind == 0)
+                        {
+                            $scope.pr[ind].time = $scope.totalMinutes;
                         }
-                        console.log(tt);
-                   alert("You have enter exceeded time from your total working hours.");
-                       
-                        $scope.pr[ind].time = 0;
-                        $scope.remain_minutes = $scope.totalMinutes - tt;
-                    
-                }else{
-                    $scope.remain_minutes = $scope.totalMinutes - input_time;
+                        else
+                        {
+
+                            $scope.pr[ind].time = 0;
+                         
+                        }
+                    return;
+                }
+
+                var input_time = 0;
+                for(var i = 0; i < 5; i++){
+                     if($scope.pr[i].time != ""  )
+                            {
+                                input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
+
+                            }
+                    //input_time = parseInt(input_time) + parseInt($scope.pr[i].time);
                 }
                 
-               }
-     }//checklogout END CONDITION 
-}); //checklogout END FUNCTION 
+                var total_time = $scope.totalMinutes;
+                
+                if(total_time < input_time)
+                {
+                    var newt = 0;
+                    for(var i = 0; i < 5; i++){
+                        if(ind == 0)
+                        {
+                            $scope.pr[i].time = $scope.totalMinutes;
+                        }
+                        else
+                        {   if($scope.pr[i].time != ""  )
+                            {
+                                if(i != ind){
+                                newt = parseInt(newt) + parseInt($scope.pr[i].time);
+                            }
+                            }
+                            
+                        }
+                    }
+                    
+                   $scope.pr[ind].time = parseInt(total_time) - parseInt(newt);
+                   if(ind != 5){
+                        $scope.pr[ind].time = 0;
+                   }
+                }
+                else
+                {
+
+                    $scope.pr[ind].time = parseInt(total_time) - parseInt(input_time);
+                }
+    };
+
+   
 }]);
 
 app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element', 'close',
