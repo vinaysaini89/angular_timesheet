@@ -12,12 +12,14 @@ app.service('auth',['$localStorage', '$sessionStorage', '$http',"$location",'$ro
                 $rootScope.login_message = "You are loggedIn successfully";
                 $rootScope.authUser =  response.data.data;
         				$localStorage.user = response.data.data;
+               //$localStorage.user.already_log = 0;
         				login = 1;
         			}
               else if(response.data.code == 400){
                 $rootScope.login_message = "You are already loggedIn";
                 $rootScope.authUser =  response.data.data;
                 $localStorage.user = response.data.data;
+                //$localStorage.user.already_log = 1;
         				login = 2;
         			}
               else
