@@ -56,6 +56,11 @@ app.service('auth',['$localStorage', '$sessionStorage', '$http',"$location",'$ro
       return  $localStorage.user.id;
     }
 
+    //get user data
+    this.getLogged_in_time = function(){
+      return  $localStorage.user.logged_in_time;
+    }
+
 		/**
      	* Destroy localstorage
      	*/
@@ -94,6 +99,15 @@ app.service('auth',['$localStorage', '$sessionStorage', '$http',"$location",'$ro
       		
 
       	};
+
+
+        /**
+      * Destroy localstorage
+      */
+      this.systemlogout = function destroy(){
+        $localStorage.user = {};
+        $location.url('/login');
+        };
 
         this.checklogout = function(emp_id, pass, callback) {
            $http
