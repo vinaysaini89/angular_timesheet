@@ -113,8 +113,11 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
                     return;
                   }
                   else{
-           
-       
+    if(!auth.getLogged_in_time())
+    {
+        $location.url('/');
+    }      
+    
     $rootScope.complent = "";
     $scope.pr = {
           "0": {"pro": 0,'time':''},
@@ -126,7 +129,7 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
         };
     //$scope.pr = {};
 
-    $scope.logged_time_in = new Date($rootScope.authUser.logged_in_time);
+    $scope.logged_time_in = new Date(auth.getLogged_in_time());
     var logged_time_in = moment($scope.logged_time_in); // another date
     var now = moment(new Date());
     var duration = moment.duration(now.diff(logged_time_in));
@@ -466,8 +469,8 @@ app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','
 }]);
 
 
-app.controller("appCtrl", ["$scope","$rootScope","$http",'auth','$location', 
-    function($scope, $rootScope,$http, auth,$location){
+app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth','$location', 
+    function($localStorage, $scope, $rootScope,$http, auth,$location){
     if($rootScope.login_message == "" || $rootScope.login_message == undefined)
     {
         $rootScope.login_message = "You are loggedIn";
@@ -475,10 +478,29 @@ app.controller("appCtrl", ["$scope","$rootScope","$http",'auth','$location',
     if(!auth.isLoggedIn()){
         $location.url('/login');
     }
+   
    $scope.logout = function(){
-    auth.logout();
+    auth.systemlogout();
    }
 
+   $rootScope.logged_in_time = 0;
+   $scope.timein = function(){
+           $http
+            .get(apiBaseUrl+'auth/timestart?emp_id='+auth.getUserId())
+            .then(function(response){
+              if(response.data.code == 200)
+              {
+                    $localStorage.user.logged_in_time = response.data.data.logged_in_time;
+                    //$rootScope.logged_in_time = response.data.data.logged_in_time;
+                
+              }
+              else
+                {
+                    alert(response.data.message);
+                }
+              
+          });
+   }
 
 }]);
 
@@ -504,7 +526,8 @@ app.controller("loginCtrl", ["$localStorage","$rootScope","$scope","$http", '$lo
         auth.logIn($scope.emp_id,$scope.pass, function(res){
             if(res ==1 || res == 2)
             {
-                //console.log(auth.getUser());
+                console.log(auth.getUser());
+                $location.url('/');
                 $location.url('/');
             }
             else
