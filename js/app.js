@@ -512,6 +512,24 @@ app.controller("loginCtrl", ["$localStorage","$rootScope","$scope","$http", '$lo
             // Redirect to third party login page
          //   $location.url('/');
         //}
+        $scope.selected_emp = {};
+        $http
+        .get(apiBaseUrl+'auth/getallemployee')
+            .then(function(response){
+              if(response.data.code == 200)
+              {
+                $scope.emp = response.data.data;
+               
+              }
+              else if(response.data.code == 400)
+              {
+                alert("Data not found");
+              }
+              else
+              {
+                 alert("Data not found");
+              }
+          });
 
     $scope.login = function(){
         if(!$scope.emp_id){
@@ -524,7 +542,7 @@ app.controller("loginCtrl", ["$localStorage","$rootScope","$scope","$http", '$lo
             return;
         }
 
-        auth.logIn($scope.emp_id,$scope.pass, function(res){
+        auth.logIn($scope.emp_id.id,$scope.pass, function(res){
             if(res ==1 || res == 2)
             {
                 console.log(auth.getUser());

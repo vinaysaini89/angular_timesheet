@@ -6,7 +6,11 @@
 			            <div class="content-wrap">
 			                <h6>Employee Timesheet</h6>
 			                <form>
-				                <input  class="form-control" ng-model="emp_id" type="text" placeholder="Enter a Employee id" required>
+				               
+				               	<select required class="form-control" ng-model="emp_id" ng-options="(item.first_name + ' ' + item.last_name+' - '+item.id) | capitalize for item in emp track by item.id">
+				               		<option value="">Select Employee</option>
+				               	</select>
+				               	</br>
 				                <input class="form-control" ng-model="pass" type="password" placeholder="Password" required>
 				                <div class="action">
 				                    <button ng-click="login()" class="btn btn-primary signup">Login</button>
