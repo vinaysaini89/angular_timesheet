@@ -491,6 +491,7 @@ app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth',
               if(response.data.code == 200)
               {
                     $localStorage.user.logged_in_time = response.data.data.logged_in_time;
+                    //$localStorage.user.already_log = 1;//
                     //$rootScope.logged_in_time = response.data.data.logged_in_time;
                 
               }
@@ -528,7 +529,7 @@ app.controller("loginCtrl", ["$localStorage","$rootScope","$scope","$http", '$lo
             {
                 console.log(auth.getUser());
                 $location.url('/');
-                $location.url('/');
+                //$location.url('/');
             }
             else
             {

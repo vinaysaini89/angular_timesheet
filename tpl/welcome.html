@@ -10,9 +10,9 @@
 			  		<div class="content-box-large text-center">
 			  			<p class="welcome">{{login_message}}.</br></p>
 			  			<p class="welcome" ng-show="authUser.logged_in_time">Your login time is: {{authUser.logged_in_time}} </p>
-			  			<a class="btn btn-primary" ng-show="!authUser.logged_in_time" ng-click="timein()" >Time In</a>
-			  			<a class="btn btn-danger" ng-show="authUser.logged_in_time" ui-sref="logout" >Time Out</a>
-			  			<a class="btn btn-danger" ng-show="!authUser.logged_in_time" ng-click="logout()" >Logout</a>
+			  			<a class="btn btn-primary" ng-show="(!authUser.logged_in_time  && !authUser.logged_out_time)" ng-click="timein()" >Time In</a>
+			  			<a class="btn btn-danger" ng-show="(authUser.logged_in_time && !authUser.logged_out_time)" ui-sref="logout" >Time Out</a>
+			  			<a class="btn btn-danger" ng-show="(!authUser.logged_in_time || authUser.logged_out_time)" ng-click="logout()" >Logout</a>
 			  		</div>	
 				</div>
 			</div>
