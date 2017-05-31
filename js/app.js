@@ -423,8 +423,8 @@ app.controller("logoutCtrl", ["$rootScope","$scope", "$filter","$http",'auth','$
 }); //checklogout END FUNCTION 
 }]);
 
-app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element', 'close',
-    function($scope, $rootScope,$http, auth,$location, $element, close){
+app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','$element', 'close','$localStorage',
+    function($scope, $rootScope,$http, auth,$location, $element, close, $localStorage){
     
      $scope.logout = function(complent) {
             if(complent == "")
@@ -465,12 +465,81 @@ app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','
 
             
 
-     }
+    }
+
+     $scope.save = function(complent) {
+            if(complent == "")
+            {
+                alert("Please enter the reason for leaving early");
+                return;
+            }
+
+            var today = new Date();
+            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            var dateTime = date+' '+time;
+            $rootScope.postData = {
+                        "login_time": dateTime
+            }
+            $rootScope.postData.reason = complent;
+                 $http({
+                              method: 'POST',
+                              url: apiBaseUrl+'login_reason?emp_id='+auth.getUserId(),
+                              data: $.param($rootScope.postData),
+                              headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+                              //  dataType: "json"
+
+                            }).then(function successCallback(response) {
+                                //console.log(response);
+                                //  Manually hide the modal using bootstrap.
+                                //$element.modal('hide');
+                                //close(null, 500);
+                                if(response.data.code == 200)
+                                {
+                                    
+                                    $http
+                                        .get(apiBaseUrl+'auth/timestart?emp_id='+auth.getUserId())
+                                        .then(function(response){
+                                          if(response.data.code == 200)
+                                          {
+                                                $localStorage.user.logged_in_time = response.data.data.logged_in_time;
+                                                //$localStorage.user.already_log = 1;//
+                                                //$rootScope.logged_in_time = response.data.data.logged_in_time;
+                                            
+                                          }
+                                          else
+                                            {
+                                                alert(response.data.message);
+                                            }
+                                          
+                                    });
+
+
+                                    $element.modal('hide');
+                                    close(null, 500);
+                                    //auth.logout();
+                                    
+                                }
+                                else
+                                {
+                                    alert(response.data.message);
+                                }
+                              }, function errorCallback(response) {
+                                 console.log(response);
+                              });
+
+
+            
+
+    }
+
+
+
 }]);
 
 
-app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth','$location', 
-    function($localStorage, $scope, $rootScope,$http, auth,$location){
+app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth','$location', 'ModalService',
+    function($localStorage, $scope, $rootScope,$http, auth, $location, ModalService){
     if($rootScope.login_message == "" || $rootScope.login_message == undefined)
     {
         $rootScope.login_message = "You are loggedIn";
@@ -485,7 +554,24 @@ app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth',
 
    $rootScope.logged_in_time = 0;
    $scope.timein = function(){
-           $http
+        var today = new Date();
+        var current_hours = today.getHours()
+        if(current_hours >= 11)
+        { 
+            
+            ModalService.showModal({
+                templateUrl: "tpl/login_report_modal.html",
+                controller: "reportCtrl"
+                }).then(function(modal) {
+                    modal.element.modal();
+                                                        
+            });
+
+            return;                
+        }
+
+
+        $http
             .get(apiBaseUrl+'auth/timestart?emp_id='+auth.getUserId())
             .then(function(response){
               if(response.data.code == 200)
@@ -500,7 +586,7 @@ app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth',
                     alert(response.data.message);
                 }
               
-          });
+        });
    }
 
 }]);
