@@ -79,10 +79,10 @@ app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpPro
         url: '/notfound',
         views: {
             "header@": {
-                templateUrl : "",
+                template : "",
             },
             "sidebar@": {
-                templateUrl : ""
+                template : ""
                 },
             "content@": {
                 templateUrl : "tpl/notfound.html",
