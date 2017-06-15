@@ -1,6 +1,9 @@
 var app = angular.module('EmployeeTimesheet', ['ui.router', 'ngStorage', 'angularMoment','angularModalService']);
 var apiBaseUrl = "http://employeetimesheet.com/";
 //var apiBaseUrl = "http://ankur01.thirstt.com:81/timesheet_api/index.php/";
+
+var ip_list = ['122.160.173.139'];
+
 app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpProvider',
     function($stateProvider,$urlRouterProvider,$locationProvider, $httpProvider) {
     $stateProvider
@@ -70,6 +73,22 @@ app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpPro
         }
 
         })
+    .state('notfound',{
+        url: '/notfound',
+        views: {
+            "header@": {
+                templateUrl : "",
+            },
+            "sidebar@": {
+                templateUrl : ""
+                },
+            "content@": {
+                templateUrl : "tpl/notfound.html",
+                //controller:  "notfoundCtrl"
+            }
+        }
+
+        })
     $urlRouterProvider.otherwise('/');
 
     $locationProvider.html5Mode(false);
@@ -83,14 +102,18 @@ app.config(['$stateProvider','$urlRouterProvider','$locationProvider', '$httpPro
     
 }]);
 
-app.run(["$rootScope", "$location",'auth', function ($rootScope, $location, auth) {
+app.run(["$rootScope", "$location",'auth','$http', function ($rootScope, $location, auth,$http) {
         
+        auth.ipCheck();
+
         $rootScope.location = $location.url();
 
         if(auth.isLoggedIn()){
             $rootScope.authUser =  auth.getUser();
             return;
         }
+         
+
 
         // Redirect to third party login page
         $location.url('/login');
@@ -429,7 +452,7 @@ app.controller("reportCtrl", ["$scope","$rootScope","$http",'auth','$location','
      $scope.logout = function(complent) {
             if(complent == "")
             {
-                alert("Please nter the reason for leaving early");
+                alert("Please enter the reason for leaving early");
                 return;
             }
             $rootScope.postData.reason = complent;
@@ -547,6 +570,8 @@ app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth',
     if(!auth.isLoggedIn()){
         $location.url('/login');
     }
+
+    auth.ipCheck();
    
    $scope.logout = function(){
     auth.systemlogout();
@@ -594,6 +619,7 @@ app.controller("appCtrl", ["$localStorage","$scope","$rootScope","$http",'auth',
 app.controller("loginCtrl", ["$localStorage","$rootScope","$scope","$http", '$location', 'auth',
     function($localStorage, $rootScope,$scope, $http, $location, auth){
 
+        auth.ipCheck();
        // if(auth.isLoggedIn()){ 
             // Redirect to third party login page
          //   $location.url('/');
@@ -825,3 +851,7 @@ function isEmpty(obj) {
     return true;
 }
 
+function ipCheck()
+{
+
+}
