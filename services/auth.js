@@ -122,4 +122,20 @@ app.service('auth',['$localStorage', '$sessionStorage', '$http',"$location",'$ro
 
         }
 
+
+
+        this.ipCheck = function ipCheck()
+        {
+            var url = "http://freegeoip.net/json/";
+            $http.get(url).then(function(response) {
+              //console.log(response.data.ip);
+              $rootScope.ip = response.data.ip;
+              //alert(ip_list.indexOf($rootScope.ip));
+              if(ip_list.indexOf($rootScope.ip) == "-1")
+              {   //alert("df");
+                  $location.url('/notfound');
+              }
+            });
+        }
+
 }]);
